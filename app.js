@@ -30,7 +30,50 @@ router.post('/',(req,res)=>{
     currentContent.push({id,name,descriçao,preco})
     writeFile(currentContent)
     res.send({id,name,descriçao,preco})
+    //update de cardapio
+router.put('/:id',async (req,res)=>{
+    const {id} = req.params
+
+
+    const {name,descriçao,preco} = req.body
+
+    const currentContent = readFile()
+    const selectedItem = currentContent.findIndex((item)=>item.id === id)  
+   
+    const {id :cid,name: cname,descriçao :cdescriçao,preco: cpreco} = currentContent[selectedItem]
+
+    const newObject ={
+        id:cid,
+        name:name? name : cname,
+        descriçao: descriçao? descriçao :cdescriçao,
+        preco : preco? preco:cpreco
+    }
+
+   currentContent[selectedItem]=newObject
+    writeFile(currentContent)
+
+   res.send(newObject)
+})
+
+//delete 
+router.delete('/:id',(req,res)=>{
+    const {id} = req.params
+    const currentContent = readFile()
+    const selectedItem = currentContent.findIndex((item)=>item.id === id) 
+
+    currentContent.splice(selectedItem,1)
+    writeFile(currentContent)
     
+    res.send('exist item!')
+
+})
+
+//router public
+app.use(router)
+
+app.listen(3000,function(){
+    console.log('Servidor Online!')
+})
 })
 
 
